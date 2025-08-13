@@ -1,11 +1,5 @@
 namespace Backend.Api.Models;
 
-public enum StockTransactionType
-{
-    Inbound,
-    Outbound
-}
-
 public class StockTransaction
 {
     public int Id { get; set; }

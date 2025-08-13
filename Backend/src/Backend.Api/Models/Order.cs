@@ -1,14 +1,5 @@
 namespace Backend.Api.Models;
 
-public enum OrderStatus
-{
-    Ordered,
-    Pending,
-    Delivery,
-    Completed,
-    Aborted
-}
-
 public class Order
 {
     public int Id { get; set; }
