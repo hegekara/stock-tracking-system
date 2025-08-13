@@ -16,6 +16,7 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 //  services
 builder.Services.AddScoped<IAddressService, AddressService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 
 // swagger
