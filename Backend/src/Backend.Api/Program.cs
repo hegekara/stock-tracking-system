@@ -24,6 +24,7 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IStockTransactionService, StockTransactionService>();
 
 
 // swagger
