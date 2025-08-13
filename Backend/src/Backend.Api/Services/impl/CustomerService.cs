@@ -36,10 +36,8 @@ namespace Backend.Api.Services
 
         public async Task<Customer> AddAsync(CustomerDtoIU customerDto)
         {
-            // DTO -> Customer map
             var customer = _mapper.Map<Customer>(customerDto);
 
-            // Address'i ID üzerinden çek
             var address = await _addressRepository.GetByIdAsync(customerDto.AddressId);
             if (address == null)
                 throw new Exception($"Address with ID {customerDto.AddressId} not found");
