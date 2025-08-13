@@ -1,20 +1,37 @@
 using Backend.Api.Data;
+using Backend.Api.Repositories;
+using Backend.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
+builder.Services.AddControllers();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+//  repository
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+//  services
+builder.Services.AddScoped<IAddressService, AddressService>();
+
+
+// swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+
+app.MapControllers();
 
 app.Run();

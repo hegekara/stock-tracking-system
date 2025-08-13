@@ -5,10 +5,9 @@ namespace Backend.Api.Data;
 
 public class AppDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-    {
-    }
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+    // DbSets
     public DbSet<Category> Categories { get; set; } = null!;
     public DbSet<Supplier> Suppliers { get; set; } = null!;
     public DbSet<Warehouse> Warehouses { get; set; } = null!;
@@ -17,8 +16,6 @@ public class AppDbContext : DbContext
     public DbSet<Customer> Customers { get; set; } = null!;
     public DbSet<Order> Orders { get; set; } = null!;
     public DbSet<OrderDetail> OrderDetails { get; set; } = null!;
-    public DbSet<City> Cities { get; set; } = null!;
-    public DbSet<District> Districts { get; set; } = null!;
     public DbSet<Address> Addresses { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -68,22 +65,5 @@ public class AppDbContext : DbContext
             .WithMany(p => p.OrderDetails)
             .HasForeignKey(od => od.ProductId);
 
-        modelBuilder.Entity<City>()
-            .HasMany(c => c.Districts)
-            .WithOne(d => d.City)
-            .HasForeignKey(d => d.CityId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<Address>()
-            .HasOne(a => a.City)
-            .WithMany()
-            .HasForeignKey(a => a.CityId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<Address>()
-            .HasOne(a => a.District)
-            .WithMany()
-            .HasForeignKey(a => a.DistrictId)
-            .OnDelete(DeleteBehavior.Restrict);
     }
 }
