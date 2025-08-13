@@ -7,7 +7,7 @@ public class Product
     public string? Description { get; set; }
     public decimal UnitPrice { get; set; }
     public int UnitsInStock { get; set; }
-    public bool? Deleted { get; set; }
+    public bool? Deleted { get; set; } = false;
 
     public int CategoryId { get; set; }
     public Category Category { get; set; } = null!;

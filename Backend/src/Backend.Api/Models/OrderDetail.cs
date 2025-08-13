@@ -10,5 +10,5 @@ public class OrderDetail
 
     public int Quantity { get; set; }
     public decimal UnitPrice { get; set; }
-    public bool? Deleted { get; set; }
+    public bool? Deleted { get; set; } = false;
 }

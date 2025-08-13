@@ -15,7 +15,7 @@ public class Order
     public DateTime OrderDate { get; set; }
     public DateTime? ShippedDate { get; set; }
     public OrderStatus Status { get; set; } = OrderStatus.Ordered;
-    public bool? Deleted { get; set; }
+    public bool? Deleted { get; set; } = false;
 
     public int CustomerId { get; set; }
     public Customer Customer { get; set; } = null!;
