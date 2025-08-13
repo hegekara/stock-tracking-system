@@ -8,7 +8,7 @@ namespace Backend.Api.Mappings
         public CustomerProfile()
         {
             CreateMap<CustomerDtoIU, Customer>()
-                .ForMember(dest => dest.Address, opt => opt.Ignore()); // Address sonradan set edilecek
+                .ForMember(dest => dest.Address, opt => opt.Ignore());
         }
     }
 }
