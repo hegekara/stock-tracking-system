@@ -8,13 +8,6 @@ public class Product
     public decimal UnitPrice { get; set; }
     public int UnitsInStock { get; set; }
     public bool? Deleted { get; set; } = false;
-
-    public int CategoryId { get; set; }
     public Category Category { get; set; } = null!;
-
-    public int SupplierId { get; set; }
     public Supplier Supplier { get; set; } = null!;
-
-    public ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
-    public ICollection<StockTransaction> StockTransactions { get; set; } = new List<StockTransaction>();
 }

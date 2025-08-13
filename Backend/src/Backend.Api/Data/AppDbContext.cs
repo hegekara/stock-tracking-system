@@ -1,69 +1,156 @@
-using Backend.Api.Models;
 using Microsoft.EntityFrameworkCore;
+using Backend.Api.Models;
 
 namespace Backend.Api.Data;
 
 public class AppDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    {
+    }
 
-    // DbSets
-    public DbSet<Category> Categories { get; set; } = null!;
-    public DbSet<Supplier> Suppliers { get; set; } = null!;
-    public DbSet<Warehouse> Warehouses { get; set; } = null!;
-    public DbSet<Product> Products { get; set; } = null!;
-    public DbSet<StockTransaction> StockTransactions { get; set; } = null!;
-    public DbSet<Customer> Customers { get; set; } = null!;
-    public DbSet<Order> Orders { get; set; } = null!;
-    public DbSet<OrderDetail> OrderDetails { get; set; } = null!;
-    public DbSet<Address> Addresses { get; set; } = null!;
+    public DbSet<Address> Addresses { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Customer> Customers { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderDetail> OrderDetails { get; set; }
+    public DbSet<Product> Products { get; set; }
+    public DbSet<StockTransaction> StockTransactions { get; set; }
+    public DbSet<Supplier> Suppliers { get; set; }
+    public DbSet<Warehouse> Warehouses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<OrderDetail>()
-            .HasKey(od => new { od.OrderId, od.ProductId });
+        modelBuilder.Entity<Address>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.CityName).HasMaxLength(100);
+            entity.Property(e => e.DistrictName).HasMaxLength(100);
+        });
 
-        modelBuilder.Entity<Category>()
-            .HasMany(c => c.Products)
-            .WithOne(p => p.Category)
-            .HasForeignKey(p => p.CategoryId)
-            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<Category>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Description).HasMaxLength(500);
+        });
 
-        modelBuilder.Entity<Supplier>()
-            .HasMany(s => s.Products)
-            .WithOne(p => p.Supplier)
-            .HasForeignKey(p => p.SupplierId)
-            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<Customer>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.FirstName).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.LastName).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Phone).IsRequired().HasMaxLength(20);
+            entity.Property(e => e.Email).HasMaxLength(100);
+            
+            entity.HasOne(e => e.Address)
+                  .WithMany()
+                  .HasForeignKey("AddressId")
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
 
-        modelBuilder.Entity<Product>()
-            .HasMany(p => p.StockTransactions)
-            .WithOne(st => st.Product)
-            .HasForeignKey(st => st.ProductId)
-            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<Order>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.OrderDate).IsRequired();
+            entity.Property(e => e.Status).HasConversion<string>();
+            
+            entity.HasOne(e => e.Customer)
+                  .WithMany()
+                  .HasForeignKey("CustomerId")
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
 
-        modelBuilder.Entity<Warehouse>()
-            .HasMany(w => w.StockTransactions)
-            .WithOne(st => st.Warehouse)
-            .HasForeignKey(st => st.WarehouseId)
-            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<OrderDetail>(entity =>
+        {
+            entity.HasKey(e => new { e.Id });
+            
+            entity.Property(e => e.Quantity).IsRequired();
+            entity.Property(e => e.UnitPrice).HasPrecision(18, 2);
+            
+            entity.HasOne(e => e.Order)
+                  .WithMany()
+                  .HasForeignKey("OrderId")
+                  .OnDelete(DeleteBehavior.Cascade);
+                  
+            entity.HasOne(e => e.Product)
+                  .WithMany()
+                  .HasForeignKey("ProductId")
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
 
-        modelBuilder.Entity<Customer>()
-            .HasMany(c => c.Orders)
-            .WithOne(o => o.Customer)
-            .HasForeignKey(o => o.CustomerId)
-            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<Product>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Description).HasMaxLength(1000);
+            entity.Property(e => e.UnitPrice).HasPrecision(18, 2);
+            entity.Property(e => e.UnitsInStock).IsRequired();
+            
+            entity.HasOne(e => e.Category)
+                  .WithMany()
+                  .HasForeignKey("CategoryId")
+                  .OnDelete(DeleteBehavior.Restrict);
+                  
+            entity.HasOne(e => e.Supplier)
+                  .WithMany()
+                  .HasForeignKey("SupplierId")
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
 
-        modelBuilder.Entity<OrderDetail>()
-            .HasOne(od => od.Order)
-            .WithMany(o => o.OrderDetails)
-            .HasForeignKey(od => od.OrderId);
+        modelBuilder.Entity<StockTransaction>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.TransactionDate).IsRequired();
+            entity.Property(e => e.Quantity).IsRequired();
+            entity.Property(e => e.TransactionType).HasConversion<string>();
+            
+            entity.HasOne(e => e.Product)
+                  .WithMany()
+                  .HasForeignKey("ProductId")
+                  .OnDelete(DeleteBehavior.Restrict);
+                  
+            entity.HasOne(e => e.Warehouse)
+                  .WithMany()
+                  .HasForeignKey("WarehouseId")
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
 
-        modelBuilder.Entity<OrderDetail>()
-            .HasOne(od => od.Product)
-            .WithMany(p => p.OrderDetails)
-            .HasForeignKey(od => od.ProductId);
+        modelBuilder.Entity<Supplier>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.ContactName).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Phone).IsRequired().HasMaxLength(20);
+            entity.Property(e => e.Email).HasMaxLength(100);
+            
+            entity.HasOne(e => e.Address)
+                  .WithMany()
+                  .HasForeignKey("AddressId")
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
 
+        modelBuilder.Entity<Warehouse>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            
+            entity.HasOne(e => e.Address)
+                  .WithMany()
+                  .HasForeignKey("AddressId")
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Address>().HasQueryFilter(e => !e.Deleted);
+        modelBuilder.Entity<Category>().HasQueryFilter(e => e.Deleted != true);
+        modelBuilder.Entity<Customer>().HasQueryFilter(e => e.Deleted != true);
+        modelBuilder.Entity<Order>().HasQueryFilter(e => e.Deleted != true);
+        modelBuilder.Entity<OrderDetail>().HasQueryFilter(e => e.Deleted != true);
+        modelBuilder.Entity<Product>().HasQueryFilter(e => e.Deleted != true);
+        modelBuilder.Entity<StockTransaction>().HasQueryFilter(e => e.Deleted != true);
+        modelBuilder.Entity<Supplier>().HasQueryFilter(e => e.Deleted != true);
+        modelBuilder.Entity<Warehouse>().HasQueryFilter(e => e.Deleted != true);
     }
 }

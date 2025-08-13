@@ -40,7 +40,6 @@ namespace Backend.Api.Services
             if (existing == null || existing.Deleted)
                 return null;
 
-            existing.Street = address.Street;
             existing.CityName = address.CityName;
             existing.DistrictName = address.DistrictName;
 
