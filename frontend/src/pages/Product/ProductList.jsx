@@ -40,7 +40,7 @@ const ProductList = () => {
     return (
         <>
             <Header />
-            <div className="container mt-4">
+            <div className="container mt-4 px-5">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <h2>Ürün Listesi</h2>
                     <button className="btn btn-primary" onClick={() => navigate('/product-create')}>Ürün Ekle</button>

@@ -91,7 +91,7 @@ const ProductCreate = () => {
     return (
         <>
             <Header />
-            <div className="container mt-4">
+            <div className="container mt-4 px-5">
                 <Card>
                     <Card.Header>
                         <h4>Ürün Oluştur</h4>

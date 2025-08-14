@@ -10,10 +10,14 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ProductList from './pages/Product/ProductList';
 import StockTransaction from './pages/Product/StockTransaction';
 import ProductCreate from './pages/Product/ProductCreate';
+import SupplierList from './pages/Supplier/SupplierList';
+import Header from './components/Header';
+import SupplierCreate from './pages/Supplier/SupplierCreate';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <Routes>
+      
       <Route path="/login" element={<Login />} />
 
 
@@ -45,6 +49,18 @@ createRoot(document.getElementById('root')).render(
       <Route path="/product-create" element={
         <ProtectedRoute>
           <ProductCreate />
+        </ProtectedRoute>
+      } />
+
+
+      <Route path="/supplier-list" element={
+        <ProtectedRoute>
+          <SupplierList />
+        </ProtectedRoute>
+      } />
+      <Route path="/supplier-create" element={
+        <ProtectedRoute>
+          <SupplierCreate />
         </ProtectedRoute>
       } />
 
