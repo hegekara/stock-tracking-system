@@ -2,6 +2,7 @@ using AutoMapper;
 using Backend.Api.Models;
 using Backend.Api.Repositories;
 using Backend.Api.DTOs;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Api.Services
 {
@@ -20,17 +21,29 @@ namespace Backend.Api.Services
 
         public async Task<IEnumerable<Order>> GetAllAsync()
         {
-            return await _orderRepository.FindAsync(o => o.Deleted == false || o.Deleted == null);
+            return await _orderRepository.FindAsync(
+                o => o.Deleted == false || o.Deleted == null,
+                include: q => q
+                    .Include(x => x.Customer)
+                        .ThenInclude(c => c.Address)
+            );
         }
 
         public async Task<Order?> GetByIdAsync(int id)
         {
-            var order = await _orderRepository.GetByIdAsync(id);
+            var order = await _orderRepository.FirstOrDefaultAsync(
+                c => c.Id == id && (c.Deleted == false || c.Deleted == null),
+                include: q => q
+                    .Include(x => x.Customer)
+                        .ThenInclude(c => c.Address)
+            );
+
             if (order == null || order.Deleted == true)
                 return null;
 
             return order;
         }
+
 
         public async Task<Order> AddAsync(OrderDtoIU orderDto)
         {
@@ -40,6 +53,7 @@ namespace Backend.Api.Services
 
             var order = _mapper.Map<Order>(orderDto);
             order.Customer = customer;
+            order.OrderDate = DateTime.Now;
 
             await _orderRepository.AddAsync(order);
             await _orderRepository.SaveChangesAsync();

@@ -1,6 +1,7 @@
 using AutoMapper;
 using Backend.Api.Models;
 using Backend.Api.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Api.Services
 {
@@ -22,16 +23,18 @@ namespace Backend.Api.Services
 
         public async Task<IEnumerable<Customer>> GetAllAsync()
         {
-            return await _repository.FindAsync(c => c.Deleted == false || c.Deleted == null);
+            return await _repository.FindAsync(
+                c => c.Deleted == false || c.Deleted == null,
+                include: q => q.Include(x => x.Address)
+            );
         }
 
         public async Task<Customer?> GetByIdAsync(int id)
         {
-            var customer = await _repository.GetByIdAsync(id);
-            if (customer == null || customer.Deleted == true)
-                return null;
-
-            return customer;
+            return await _repository.FirstOrDefaultAsync(
+                c => c.Id == id && (c.Deleted == false || c.Deleted == null),
+                include: q => q.Include(x => x.Address)
+            );
         }
 
         public async Task<Customer> AddAsync(CustomerDtoIU customerDto)
