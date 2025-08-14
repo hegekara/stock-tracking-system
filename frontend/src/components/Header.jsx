@@ -23,6 +23,9 @@ const Header = () => {
                             <a className="nav-link text-dark" href="/supplier-list">Tedarikçiler</a>
                         </li>
                         <li className="nav-item">
+                            <a className="nav-link text-dark" href="/transaction-manager">İşlem Yöneticisi</a>
+                        </li>
+                        <li className="nav-item">
                             <a className="nav-link text-dark" href="/logs">Log Yöneticisi</a>
                         </li>
                     </ul>

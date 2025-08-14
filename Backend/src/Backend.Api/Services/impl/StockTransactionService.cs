@@ -25,9 +25,16 @@ namespace Backend.Api.Services
         public async Task<IEnumerable<StockTransaction>> GetAllAsync()
         {
             var transactions = await _transactionRepository
-                .FindAsync(t => t.Deleted == false || t.Deleted == null, include: q =>
-                    q.Include(x => x.Product)
-                    .OrderByDescending(d => d.TransactionDate));
+                .FindAsync(
+                    t => t.Deleted == false || t.Deleted == null,
+                    include: q => q
+                        .Include(x => x.Product)
+                            .ThenInclude(x => x.Category)
+                        .Include(x => x.Product)
+                            .ThenInclude(x => x.Supplier)
+                                .ThenInclude(x => x.Address)
+                        .OrderByDescending(d => d.TransactionDate)
+                );
 
             return transactions;
         }
