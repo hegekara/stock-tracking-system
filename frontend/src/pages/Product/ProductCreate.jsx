@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Form, Button, Card, Alert, Spinner } from "react-bootstrap";
-import { apiFetch } from "../../api"; // Senin verdiğin apiFetch fonksiyonu
+import { apiFetch } from "../../api";
 import Header from "../../components/Header";
 
 const ProductCreate = () => {
