@@ -1,12 +1,13 @@
 using Backend.Api.Dtos;
+using Backend.Api.Models;
 
 namespace Backend.Api.Services
 {
     public interface IProductService
     {
-        Task<IEnumerable<ProductDto>> GetAllAsync();
-        Task<ProductDto?> GetByIdAsync(int id);
-        Task<ProductDto> CreateAsync(ProductDtoUI dto);
+        Task<IEnumerable<Product>> GetAllAsync();
+        Task<Product?> GetByIdAsync(int id);
+        Task<Product> CreateAsync(ProductDtoUI dto);
         Task<bool> UpdateAsync(int id, ProductDtoUI dto);
         Task<bool> DeleteAsync(int id);
     }

@@ -40,47 +40,6 @@ namespace Backend.Api.Services
             return transaction == null ? null : transaction;
         }
 
-        public async Task<StockTransaction> AddAsync(StockTransactionDtoIU dto)
-        {
-            var transaction = _mapper.Map<StockTransaction>(dto);
-
-            transaction.Product = await _productRepository.GetByIdAsync(dto.ProductId)
-                ?? throw new Exception("Product not found");
-
-            await _transactionRepository.AddAsync(transaction);
-            await _transactionRepository.SaveChangesAsync();
-
-            return transaction;
-        }
-
-        public async Task<StockTransaction?> UpdateAsync(int id, StockTransactionDtoIU dto)
-        {
-            var existing = await _transactionRepository.GetByIdAsync(id);
-            if (existing == null || existing.Deleted == true)
-                return null;
-
-            _mapper.Map(dto, existing);
-            existing.Product = await _productRepository.GetByIdAsync(dto.ProductId)
-                ?? throw new Exception("Product not found");
-
-            _transactionRepository.Update(existing);
-            await _transactionRepository.SaveChangesAsync();
-
-            return existing;
-        }
-
-        public async Task<bool> DeleteAsync(int id)
-        {
-            var transaction = await _transactionRepository.GetByIdAsync(id);
-            if (transaction == null || transaction.Deleted == true)
-                return false;
-
-            transaction.Deleted = true;
-            _transactionRepository.Update(transaction);
-            await _transactionRepository.SaveChangesAsync();
-            return true;
-        }
-
         public async Task<StockTransaction> AddStockAsync(StockTransactionDtoIU dto)
         {
             var product = await _productRepository.FirstOrDefaultAsync(

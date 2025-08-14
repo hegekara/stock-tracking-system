@@ -31,29 +31,6 @@ namespace Backend.Api.Controllers
             return Ok(transaction);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(StockTransactionDtoIU dto)
-        {
-            var created = await _service.AddAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, StockTransactionDtoIU dto)
-        {
-            var updated = await _service.UpdateAsync(id, dto);
-            if (updated == null) return NotFound();
-            return Ok(updated);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var deleted = await _service.DeleteAsync(id);
-            if (!deleted) return NotFound();
-            return NoContent();
-        }
-
         [HttpPost("add-stock")]
         public async Task<ActionResult<StockTransaction>> AddStock([FromBody] StockTransactionDtoIU dto)
         {
