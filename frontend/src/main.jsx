@@ -14,6 +14,8 @@ import SupplierList from './pages/Supplier/SupplierList';
 import SupplierCreate from './pages/Supplier/SupplierCreate';
 import LogManager from './pages/Management/LogManager';
 import TransactionManager from './pages/Management/TransactionManager';
+import UserManager from './pages/Management/UserManager';
+import UserCreate from './pages/Management/UserCreate';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
@@ -74,6 +76,16 @@ createRoot(document.getElementById('root')).render(
       <Route path="/transaction-manager" element={
         <ProtectedRoute>
           <TransactionManager />
+        </ProtectedRoute>
+      } />
+      <Route path="/user-management" element={
+        <ProtectedRoute>
+          <UserManager />
+        </ProtectedRoute>
+      } />
+      <Route path="/user-create" element={
+        <ProtectedRoute>
+          <UserCreate />
         </ProtectedRoute>
       } />
 

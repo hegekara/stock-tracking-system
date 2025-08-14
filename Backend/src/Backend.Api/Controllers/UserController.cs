@@ -8,6 +8,7 @@ namespace Backend.Api.Controllers
 {
     [ApiController]
     [Route("api/user")]
+    //[Authorize(Roles = "Admin")]
     public class UserController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -17,7 +18,7 @@ namespace Backend.Api.Controllers
             _userManager = userManager;
         }
 
-        [Authorize(Roles = "Admin")]
+
         [HttpGet("list")]
         public IActionResult GetUsers()
         {
@@ -34,9 +35,32 @@ namespace Backend.Api.Controllers
             return Ok(users);
         }
 
+        [HttpPut("change-role/{id}")]
+        public async Task<IActionResult> ChangeUserRole(string id, [FromBody] RoleChangeRequest request)
+        {
+            var newRole = request.Role;
+            var user = await _userManager.FindByIdAsync(id);
+            Console.WriteLine(user);
+            if (user == null || user.Deleted)
+                return NotFound("Kullanıcı bulunamadı");
+
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+            if (!removeResult.Succeeded)
+            {
+                return BadRequest(removeResult.Errors);
+            }
+
+            var addResult = await _userManager.AddToRoleAsync(user, newRole);
+            if (!addResult.Succeeded)
+            {
+                return BadRequest(addResult.Errors);
+            }
+
+            return Ok($"Kullanıcının rolü {newRole} olarak değiştirildi");
+        }
 
 
-        [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {

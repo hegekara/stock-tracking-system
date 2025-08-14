@@ -28,6 +28,9 @@ const Header = () => {
                         <li className="nav-item">
                             <a className="nav-link text-dark" href="/logs">Log Yöneticisi</a>
                         </li>
+                        <li className="nav-item">
+                            <a className="nav-link text-dark" href="/user-management">Kullanıcı Yöneticisi</a>
+                        </li>
                     </ul>
                     <button className="btn btn-outline-danger" onClick={handleLogout}>
                         Çıkış Yap
