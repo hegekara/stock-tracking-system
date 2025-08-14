@@ -48,6 +48,7 @@ const ProductList = () => {
                 <Table striped bordered hover>
                     <thead>
                         <tr>
+                            <th>Kategori</th>
                             <th>Adı</th>
                             <th>Açıklama</th>
                             <th>Stok</th>
@@ -58,10 +59,11 @@ const ProductList = () => {
                     <tbody>
                         {products.map((p) => (
                             <tr key={p.id}>
+                                <td>{p.category.name} {p.category.description}</td>
                                 <td>{p.name}</td>
                                 <td>{p.description}</td>
                                 <td>{p.unitsInStock}</td>
-                                <td>{p.unitPrice} ₺</td>
+                                <td>{p.unitPrice} $</td>
                                 <td>
                                     <Button onClick={() => handleShowDetails(p)}>
                                         Detay Göster
