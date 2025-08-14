@@ -26,7 +26,8 @@ namespace Backend.Api.Services
         {
             var transactions = await _transactionRepository
                 .FindAsync(t => t.Deleted == false || t.Deleted == null, include: q =>
-                    q.Include(x => x.Product));
+                    q.Include(x => x.Product)
+                    .OrderByDescending(d => d.TransactionDate));
 
             return transactions;
         }

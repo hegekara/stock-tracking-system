@@ -1,33 +1,46 @@
+using Microsoft.AspNetCore.Http;
 using Serilog;
-using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Backend.Api.Middlewares
+public class LoggingMiddleware
 {
-    public class LoggingMiddleware
+    private readonly RequestDelegate _next;
+
+    public LoggingMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
+        _next = next;
+    }
 
-        public LoggingMiddleware(RequestDelegate next)
+    public async Task InvokeAsync(HttpContext context)
+    {
+        context.Request.EnableBuffering();
+
+        var userName = context.User?.Identity?.IsAuthenticated == true
+            ? context.User.Identity.Name
+            : "Anonymous";
+
+        var endpoint = $"{context.Request.Method} {context.Request.Path}";
+
+        string bodyContent = string.Empty;
+        if (context.Request.ContentLength > 0 &&
+            (context.Request.Method == HttpMethods.Post || context.Request.Method == HttpMethods.Put))
         {
-            _next = next;
+            using (var reader = new StreamReader(
+                context.Request.Body,
+                Encoding.UTF8,
+                detectEncodingFromByteOrderMarks: false,
+                leaveOpen: true))
+            {
+                bodyContent = await reader.ReadToEndAsync();
+                context.Request.Body.Position = 0;
+            }
         }
 
-        public async Task InvokeAsync(HttpContext context)
-        {
-            var stopwatch = Stopwatch.StartNew();
+        Log.Information("{User} kullanıcısı {Endpoint} endpointine istek yaptı. Body: {Body}",
+            userName, endpoint, bodyContent);
 
-            var request = context.Request;
-            var requestInfo = $"{request.Method} {request.Path}";
-
-            Log.Information("Incoming Request: {RequestInfo}", requestInfo, context.Connection.RemoteIpAddress);
-
-            await _next(context);
-
-            stopwatch.Stop();
-
-            var response = context.Response;
-            Log.Information("Outgoing Response: {StatusCode} for {RequestInfo} in {ElapsedMilliseconds}ms",
-                response.StatusCode, requestInfo, stopwatch.ElapsedMilliseconds);
-        }
+        await _next(context);
     }
 }

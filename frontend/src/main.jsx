@@ -13,6 +13,7 @@ import ProductCreate from './pages/Product/ProductCreate';
 import SupplierList from './pages/Supplier/SupplierList';
 import Header from './components/Header';
 import SupplierCreate from './pages/Supplier/SupplierCreate';
+import LogManager from './pages/Management/LogManager';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
@@ -65,6 +66,11 @@ createRoot(document.getElementById('root')).render(
       } />
 
 
+      <Route path="/logs" element={
+        <ProtectedRoute>
+          <LogManager />
+        </ProtectedRoute>
+      } />
 
     </Routes>
   </BrowserRouter>

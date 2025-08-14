@@ -112,11 +112,13 @@ app.UseCors("allowedOrigin");
 
 
 //  middlewares
-app.UseMiddleware<LoggingMiddleware>();
+
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<LoggingMiddleware>();
 
 app.MapControllers();
 
