@@ -1,6 +1,7 @@
 using Backend.Api.Dtos;
 using Backend.Api.Models;
 using Backend.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Api.Controllers
@@ -17,6 +18,7 @@ namespace Backend.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> GetAll()
         {
             var transactions = await _service.GetAllAsync();

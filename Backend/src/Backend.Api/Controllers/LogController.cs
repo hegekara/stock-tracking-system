@@ -6,7 +6,7 @@ namespace Backend.Api.Controllers
 {
     [ApiController]
     [Route("api/logs")]
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class LogController : ControllerBase
     {
         private readonly IWebHostEnvironment _env;

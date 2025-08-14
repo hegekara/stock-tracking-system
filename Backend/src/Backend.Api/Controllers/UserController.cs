@@ -8,7 +8,7 @@ namespace Backend.Api.Controllers
 {
     [ApiController]
     [Route("api/user")]
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class UserController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;

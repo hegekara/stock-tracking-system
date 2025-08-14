@@ -6,6 +6,8 @@ const Header = () => {
         window.location.reload();
     };
 
+    const role = localStorage.getItem("role");
+
     return (
         <nav className="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div className="container-fluid">
@@ -22,15 +24,24 @@ const Header = () => {
                         <li className="nav-item">
                             <a className="nav-link text-dark" href="/supplier-list">Tedarikçiler</a>
                         </li>
-                        <li className="nav-item">
-                            <a className="nav-link text-dark" href="/transaction-manager">İşlem Yöneticisi</a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link text-dark" href="/logs">Log Yöneticisi</a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link text-dark" href="/user-management">Kullanıcı Yöneticisi</a>
-                        </li>
+
+
+                        {(role === "manager" || role === "admin") && (
+                            <li className="nav-item">
+                                <a className="nav-link text-dark" href="/transaction-manager">İşlem Yöneticisi</a>
+                            </li>
+                        )}
+
+                        {role === "admin" && (
+                            <>
+                                <li className="nav-item">
+                                    <a className="nav-link text-dark" href="/logs">Log Yöneticisi</a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link text-dark" href="/user-management">Kullanıcı Yöneticisi</a>
+                                </li>
+                            </>
+                        )}
                     </ul>
                     <button className="btn btn-outline-danger" onClick={handleLogout}>
                         Çıkış Yap
