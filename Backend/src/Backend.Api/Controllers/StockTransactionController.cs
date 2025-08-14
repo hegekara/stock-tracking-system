@@ -1,4 +1,5 @@
 using Backend.Api.Dtos;
+using Backend.Api.Models;
 using Backend.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -51,6 +52,20 @@ namespace Backend.Api.Controllers
             var deleted = await _service.DeleteAsync(id);
             if (!deleted) return NotFound();
             return NoContent();
+        }
+
+        [HttpPost("add-stock")]
+        public async Task<ActionResult<StockTransaction>> AddStock([FromBody] StockTransactionDtoIU dto)
+        {
+            var result = await _service.AddStockAsync(dto);
+            return Ok(result);
+        }
+
+        [HttpPost("remove-stock")]
+        public async Task<ActionResult<StockTransaction>> RemoveStock([FromBody] StockTransactionDtoIU dto)
+        {
+            var result = await _service.RemoveStockAsync(dto);
+            return Ok(result);
         }
     }
 }

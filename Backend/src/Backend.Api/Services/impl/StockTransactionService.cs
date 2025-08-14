@@ -22,25 +22,25 @@ namespace Backend.Api.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<StockTransactionDto>> GetAllAsync()
+        public async Task<IEnumerable<StockTransaction>> GetAllAsync()
         {
             var transactions = await _transactionRepository
                 .FindAsync(t => t.Deleted == false || t.Deleted == null, include: q =>
                     q.Include(x => x.Product));
 
-            return _mapper.Map<IEnumerable<StockTransactionDto>>(transactions);
+            return transactions;
         }
 
-        public async Task<StockTransactionDto?> GetByIdAsync(int id)
+        public async Task<StockTransaction?> GetByIdAsync(int id)
         {
             var transaction = await _transactionRepository
                 .FirstOrDefaultAsync(t => t.Id == id && (t.Deleted == false || t.Deleted == null), include: q =>
                     q.Include(x => x.Product));
 
-            return transaction == null ? null : _mapper.Map<StockTransactionDto>(transaction);
+            return transaction == null ? null : transaction;
         }
 
-        public async Task<StockTransactionDto> AddAsync(StockTransactionDtoIU dto)
+        public async Task<StockTransaction> AddAsync(StockTransactionDtoIU dto)
         {
             var transaction = _mapper.Map<StockTransaction>(dto);
 
@@ -50,10 +50,10 @@ namespace Backend.Api.Services
             await _transactionRepository.AddAsync(transaction);
             await _transactionRepository.SaveChangesAsync();
 
-            return _mapper.Map<StockTransactionDto>(transaction);
+            return transaction;
         }
 
-        public async Task<StockTransactionDto?> UpdateAsync(int id, StockTransactionDtoIU dto)
+        public async Task<StockTransaction?> UpdateAsync(int id, StockTransactionDtoIU dto)
         {
             var existing = await _transactionRepository.GetByIdAsync(id);
             if (existing == null || existing.Deleted == true)
@@ -66,7 +66,7 @@ namespace Backend.Api.Services
             _transactionRepository.Update(existing);
             await _transactionRepository.SaveChangesAsync();
 
-            return _mapper.Map<StockTransactionDto>(existing);
+            return existing;
         }
 
         public async Task<bool> DeleteAsync(int id)
@@ -79,6 +79,55 @@ namespace Backend.Api.Services
             _transactionRepository.Update(transaction);
             await _transactionRepository.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<StockTransaction> AddStockAsync(StockTransactionDtoIU dto)
+        {
+            var product = await _productRepository.FirstOrDefaultAsync(
+                p => p.Id == dto.ProductId && (p.Deleted == false || p.Deleted == null),
+                include: q => q.Include(p => p.Category).Include(p => p.Supplier));
+
+            if (product == null)
+                throw new Exception($"Product with ID {dto.ProductId} not found");
+
+            product.UnitsInStock += dto.Quantity;
+
+            var transaction = _mapper.Map<StockTransaction>(dto);
+            transaction.TransactionType = StockTransactionType.Inbound;
+            transaction.Product = product;
+
+            await _transactionRepository.AddAsync(transaction);
+            _productRepository.Update(product);
+
+            await _transactionRepository.SaveChangesAsync();
+
+            return transaction;
+        }
+
+        public async Task<StockTransaction> RemoveStockAsync(StockTransactionDtoIU dto)
+        {
+            var product = await _productRepository.FirstOrDefaultAsync(
+                p => p.Id == dto.ProductId && (p.Deleted == false || p.Deleted == null),
+                include: q => q.Include(p => p.Category).Include(p => p.Supplier));
+
+            if (product == null)
+                throw new Exception($"Product with ID {dto.ProductId} not found");
+
+            if (product.UnitsInStock < dto.Quantity)
+                throw new Exception("Not enough stock to complete the transaction");
+
+            product.UnitsInStock -= dto.Quantity;
+
+            var transaction = _mapper.Map<StockTransaction>(dto);
+            transaction.TransactionType = StockTransactionType.Outbound;
+            transaction.Product = product;
+
+            await _transactionRepository.AddAsync(transaction);
+            _productRepository.Update(product);
+
+            await _transactionRepository.SaveChangesAsync();
+
+            return transaction;
         }
     }
 }
