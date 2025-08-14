@@ -43,6 +43,22 @@ builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+//  cors
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "allowedOrigin",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
+
+
+
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
     {
         options.Password.RequireDigit = false;
@@ -92,6 +108,10 @@ using (var scope = app.Services.CreateScope())
     await RoleSeeder.SeedRolesAsync(roleManager);
 }
 
+app.UseCors("allowedOrigin");
+
+
+//  middlewares
 app.UseMiddleware<LoggingMiddleware>();
 app.UseMiddleware<ExceptionMiddleware>();
 
