@@ -42,12 +42,14 @@ namespace Backend.Api.Controllers
             await _userManager.AddToRoleAsync(user, "User");
 
             var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault();
             var token = JwtGenerator.GenerateToken(user, roles, _config);
 
             return Ok(new AuthResponseDto
             {
                 id = user.Id,
                 token = token,
+                role = role,
                 message = "Kayıt başarılı"
             });
         }
@@ -67,12 +69,14 @@ namespace Backend.Api.Controllers
             }
 
             var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault();
             var token = JwtGenerator.GenerateToken(user, roles, _config);
 
             return Ok(new AuthResponseDto
             {
                 id = user.Id,
                 token = token,
+                role = role,
                 message = "Giriş Başarılı"
             });
         }
