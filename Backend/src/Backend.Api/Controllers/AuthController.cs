@@ -58,7 +58,7 @@ namespace Backend.Api.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             var user = await _userManager.FindByNameAsync(dto.Username);
-            if (user == null)
+            if (user == null || user.Deleted)
                 return NotFound("Kullanıcı bulunamadı");
 
             var passwordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
