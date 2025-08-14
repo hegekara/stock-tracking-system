@@ -17,7 +17,6 @@ public class AppDbContext : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<StockTransaction> StockTransactions { get; set; }
     public DbSet<Supplier> Suppliers { get; set; }
-    public DbSet<Warehouse> Warehouses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -111,11 +110,6 @@ public class AppDbContext : DbContext
                   .WithMany()
                   .HasForeignKey("ProductId")
                   .OnDelete(DeleteBehavior.Restrict);
-                  
-            entity.HasOne(e => e.Warehouse)
-                  .WithMany()
-                  .HasForeignKey("WarehouseId")
-                  .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Supplier>(entity =>
@@ -132,17 +126,6 @@ public class AppDbContext : DbContext
                   .OnDelete(DeleteBehavior.Restrict);
         });
 
-        modelBuilder.Entity<Warehouse>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
-            
-            entity.HasOne(e => e.Address)
-                  .WithMany()
-                  .HasForeignKey("AddressId")
-                  .OnDelete(DeleteBehavior.Restrict);
-        });
-
         modelBuilder.Entity<Address>().HasQueryFilter(e => !e.Deleted);
         modelBuilder.Entity<Category>().HasQueryFilter(e => e.Deleted != true);
         modelBuilder.Entity<Customer>().HasQueryFilter(e => e.Deleted != true);
@@ -151,6 +134,5 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Product>().HasQueryFilter(e => e.Deleted != true);
         modelBuilder.Entity<StockTransaction>().HasQueryFilter(e => e.Deleted != true);
         modelBuilder.Entity<Supplier>().HasQueryFilter(e => e.Deleted != true);
-        modelBuilder.Entity<Warehouse>().HasQueryFilter(e => e.Deleted != true);
     }
 }

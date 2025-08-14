@@ -10,27 +10,23 @@ namespace Backend.Api.Services
     {
         private readonly IRepository<StockTransaction> _transactionRepository;
         private readonly IRepository<Product> _productRepository;
-        private readonly IRepository<Warehouse> _warehouseRepository;
         private readonly IMapper _mapper;
 
         public StockTransactionService(
             IRepository<StockTransaction> transactionRepository,
             IRepository<Product> productRepository,
-            IRepository<Warehouse> warehouseRepository,
             IMapper mapper)
         {
             _transactionRepository = transactionRepository;
             _productRepository = productRepository;
-            _warehouseRepository = warehouseRepository;
             _mapper = mapper;
         }
 
         public async Task<IEnumerable<StockTransactionDto>> GetAllAsync()
         {
             var transactions = await _transactionRepository
-                .FindAsync(t => t.Deleted == false || t.Deleted == null, include: q => 
-                    q.Include(x => x.Product)
-                     .Include(x => x.Warehouse));
+                .FindAsync(t => t.Deleted == false || t.Deleted == null, include: q =>
+                    q.Include(x => x.Product));
 
             return _mapper.Map<IEnumerable<StockTransactionDto>>(transactions);
         }
@@ -39,8 +35,7 @@ namespace Backend.Api.Services
         {
             var transaction = await _transactionRepository
                 .FirstOrDefaultAsync(t => t.Id == id && (t.Deleted == false || t.Deleted == null), include: q =>
-                    q.Include(x => x.Product)
-                     .Include(x => x.Warehouse));
+                    q.Include(x => x.Product));
 
             return transaction == null ? null : _mapper.Map<StockTransactionDto>(transaction);
         }
@@ -51,8 +46,6 @@ namespace Backend.Api.Services
 
             transaction.Product = await _productRepository.GetByIdAsync(dto.ProductId)
                 ?? throw new Exception("Product not found");
-            transaction.Warehouse = await _warehouseRepository.GetByIdAsync(dto.WarehouseId)
-                ?? throw new Exception("Warehouse not found");
 
             await _transactionRepository.AddAsync(transaction);
             await _transactionRepository.SaveChangesAsync();
@@ -69,8 +62,6 @@ namespace Backend.Api.Services
             _mapper.Map(dto, existing);
             existing.Product = await _productRepository.GetByIdAsync(dto.ProductId)
                 ?? throw new Exception("Product not found");
-            existing.Warehouse = await _warehouseRepository.GetByIdAsync(dto.WarehouseId)
-                ?? throw new Exception("Warehouse not found");
 
             _transactionRepository.Update(existing);
             await _transactionRepository.SaveChangesAsync();

@@ -6,6 +6,5 @@ namespace Backend.Api.Dtos
         public int Quantity { get; set; }
         public StockTransactionType TransactionType { get; set; }
         public int ProductId { get; set; }
-        public int WarehouseId { get; set; }
     }
 }
