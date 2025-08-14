@@ -27,7 +27,7 @@ function Login() {
 
                 localStorage.setItem('userId', id);
                 localStorage.setItem('token', token);
-                localStorage.setItem('role', role);
+                localStorage.setItem('role', role.toLowerCase());
 
                 navigate("/home");
             } else if (response.status === 404) {

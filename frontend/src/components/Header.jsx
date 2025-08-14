@@ -17,7 +17,7 @@ const Header = () => {
                 <div className="navbar-collapse collapse d-sm-inline-flex justify-content-between w-100">
                     <ul className="navbar-nav flex-grow-1">
                         <li className="nav-item">
-                            <a className="nav-link text-dark" href="/products">Ürünler</a>
+                            <a className="nav-link text-dark" href="/product-list">Ürünler</a>
                         </li>
                     </ul>
                     <button className="btn btn-outline-danger" onClick={handleLogout}>
