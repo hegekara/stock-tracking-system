@@ -19,8 +19,11 @@ namespace Backend.Api.Controllers
         [HttpGet("{fileName}")]
         public IActionResult DownloadLog(string fileName)
         {
+            Console.WriteLine("indirme isteği geldi");
             var logDir = Path.Combine(_env.ContentRootPath, "Logs");
             var filePath = Path.Combine(logDir, fileName);
+
+            Console.WriteLine(filePath);
 
             if (!System.IO.File.Exists(filePath))
                 return NotFound("Log dosyası bulunamadı.");
@@ -32,6 +35,8 @@ namespace Backend.Api.Controllers
         [HttpGet("list")]
         public IActionResult ListLogs()
         {
+
+            Console.WriteLine("listeleme isteği geldi");
             var logDir = Path.Combine(_env.ContentRootPath, "Logs");
 
             if (!Directory.Exists(logDir))

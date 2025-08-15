@@ -22,19 +22,21 @@ function LogManager() {
 
     const downloadLog = async (fileName) => {
         try {
-            const token = localStorage.getItem("token");
-            const res = await fetch(`/api/logs/${fileName}`, {
-                headers: {
-                    Authorization: token ? `Bearer ${token}` : undefined,
-                },
+            const res = await apiFetch(`/api/logs/${fileName}`, {
+                method: "GET",
+                headers: { "Content-Type": "application/octet-stream" }
             });
 
             if (!res.ok) {
-                console.error("Dosya indirilemedi:", res.statusText);
+                console.error("Dosya indirilemedi:", res.status);
                 return;
             }
+            
+            const blob = new Blob(
+                [res.data],
+                { type: "text/plain;charset=utf-8" }
+            );
 
-            const blob = await res.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
